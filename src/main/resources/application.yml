@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: map
+  datasource:
+    url: jdbc:postgresql://localhost:5432/eugene
+    username: mihail
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 185475271230-10sa38qb1e3d6ljc2mmq1dev8gisp17k.apps.googleusercontent.com
+            client-secret: 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
