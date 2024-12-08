@@ -1,9 +1,12 @@
 package bu.eugene.map.service;
 
+import bu.eugene.map.dto.ImageDto;
 import bu.eugene.map.exception.FileExtensionException;
 import bu.eugene.map.exception.FileUploadException;
 import bu.eugene.map.model.ImageEntity;
 import bu.eugene.map.repository.ImageRepository;
+import bu.eugene.map.util.Dto2EntityConverter;
+import bu.eugene.map.util.Entity2DtoConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -24,14 +27,24 @@ import java.util.List;
 public class ImageService {
 
         private final ImageRepository imageRepository;
+        private final Dto2EntityConverter dto2EntityConverter;
+        private final Entity2DtoConverter entity2DtoConverter;
+        private final PlaceService placeService;
+        private final PersonService personService;
         private final String  UPLOAD_DIR = "/Users/mihail/Downloads/map-2/uploads";
 
         private final String[] IMAGE_EXTENSIONS = new String[]{"jpg", "jpeg", "png"};
 
-        public List<ImageEntity> saveImage(List<MultipartFile> images) {
-                List<ImageEntity> imageEntities = new ArrayList<>();
+        public ImageDto saveImage(ImageDto imageDto, Integer placeId) {
+                ImageEntity image = dto2EntityConverter.convertImageDto2ImageEntity(imageDto);
+                image.setPerson(personService.findByUsername(imageDto.getAuthorUsername()));
+                image.setPathToFile(saveImagesLocal(imageDto.getImage()));
+                image.setPlace(placeService.findById(placeId));
+                return entity2DtoConverter.convertImageEntity2Dto(imageRepository.save(image));
+        }
 
-                // Создание директории, если она не существует
+        public String saveImagesLocal(MultipartFile file) {
+
                 File uploadDir = new File(UPLOAD_DIR);
                 if (!uploadDir.exists()) {
                         if (uploadDir.mkdirs()) {
@@ -42,7 +55,6 @@ public class ImageService {
                         }
                 }
 
-                for (MultipartFile file : images) {
                         log.info("start saving image");
                         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
                         String baseName = FilenameUtils.getBaseName(file.getOriginalFilename()).replaceAll(" ", "_");
@@ -60,11 +72,8 @@ public class ImageService {
                                 log.error("smth went wrong while file saving");
                                 throw new FileUploadException("ошибка загрузки файла");
                         }
-                        ImageEntity entity = new ImageEntity();
-                        entity.setPathToFile("/uploads/" + uniqueFilename);
-                        imageEntities.add(entity);
-                }
-                return imageRepository.saveAll(imageEntities);
+
+                return "/uploads/" + uniqueFilename;
         }
 
 

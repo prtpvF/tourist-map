@@ -21,7 +21,18 @@ public class Place {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private int id;
 
-        private String coordinates;
+        private String name;
+
+        private Double lat;
+
+        private Double lon;
+
+        private String country;
+
+        @Column(name = "type")
+        private String typeOfPlace;
+
+        private String suburb;
 
         @Column(name = "rate")
         private Double placeRate;

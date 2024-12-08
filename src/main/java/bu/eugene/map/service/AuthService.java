@@ -37,8 +37,7 @@ public class AuthService {
         person.setPassword(passwordEncoder.encode(person.getPassword()));
         person.setRole("USER");
         person.setPathToProfileImage(imageService
-                .saveImage(List.of(dto.getProfileImage()))
-                .get(0).getPathToFile());
+                .saveImagesLocal(dto.getProfileImage()));
         personRepository.save(person);
         return new ResponseEntity(HttpStatus.OK);
     }

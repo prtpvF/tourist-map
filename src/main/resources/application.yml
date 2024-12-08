@@ -14,5 +14,7 @@ spring:
       client:
         registration:
           google:
-            client-id: 185475271230-10sa38qb1e3d6ljc2mmq1dev8gisp17k.apps.googleusercontent.com
-            client-secret: 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
+            client-id: ${CLIENT_ID}
+            client-secret: ${CLIENT_SECRET}
+geoapify:
+  secret: ${GEOAPIFY_SECRET}

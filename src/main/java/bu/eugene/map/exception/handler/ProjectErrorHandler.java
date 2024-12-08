@@ -1,6 +1,7 @@
 package bu.eugene.map.exception.handler;
 
 import bu.eugene.map.exception.PasswordDoesntMatchException;
+import bu.eugene.map.exception.PlaceNotFoundException;
 import bu.eugene.map.exception.UsernameIsTakenException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -24,5 +25,10 @@ public class ProjectErrorHandler {
     @ExceptionHandler(PasswordDoesntMatchException.class)
     public ResponseEntity<?> passwordDoesntMatchExceptionHandler(PasswordDoesntMatchException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PlaceNotFoundException.class)
+    public ResponseEntity<?> placeNotFoundExceptionHandler(PlaceNotFoundException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 }
