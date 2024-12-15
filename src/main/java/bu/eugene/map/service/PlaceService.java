@@ -15,6 +15,9 @@ import org.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,13 +40,7 @@ public class PlaceService {
         }
 
         public PlaceDto findOrCreate(PlaceDto placeDto) {
-            Optional<Place> place = placeRepository.findByNameAndLatAndLonAndCountryAndTypeOfPlaceAndSuburb(
-                    placeDto.getName(),
-                    placeDto.getLat(),
-                    placeDto.getLon(),
-                    placeDto.getCountry(),
-                    placeDto.getTypeOfPlace(),
-                    placeDto.getSuburb());
+            Optional<Place> place = placeRepository.findByPlaceId(placeDto.getPlaceId());
 
            if(place.isPresent()) {
                return entity2DtoConverter.convertPlaceEntity2Dto(place.get());
@@ -57,7 +54,6 @@ public class PlaceService {
 
         public List<PlaceDto> getAllPlacesInfoByAPI(String cityName) {
             String dataAboutCity = geoapifyApiService.getCoordinates(cityName);
-
             if (dataAboutCity != null) {
                 JSONObject jsonObject = new JSONObject(dataAboutCity);
                 JSONArray results = jsonObject.getJSONArray("results");
@@ -85,6 +81,7 @@ public class PlaceService {
             placeDto.setLat(result.getDouble("lat"));
             placeDto.setLon(result.getDouble("lon"));
             placeDto.setCountry(result.getString("country"));
+            placeDto.setPlaceId(result.getString("place_id"));
             if (result.has("suburb")) {
                 placeDto.setSuburb(result.getString("suburb"));
             }

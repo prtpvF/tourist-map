@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PlaceDto {
 
         private Integer id;
@@ -16,4 +16,5 @@ public class PlaceDto {
         private String country;
         private String typeOfPlace;
         private String suburb;
+        private String placeId;
 }

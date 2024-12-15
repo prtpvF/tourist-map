@@ -42,13 +42,22 @@ public class AuthService {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+
+    public Map<String, String> refreshToken(String token) {
+        String username = jwtUtil.validateTokenAndRetrieveClaim(token);
+        Person person = personRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("cannot find person"));
+        String role = person.getRole();
+        return jwtUtil.refreshTokens(token, role);
+    }
+
     public Map<String, String> login(PersonDto personDto) {
         Map<String, String> tokens = new HashMap<>();
         Person person = personRepository.findByUsername(personDto.getUsername())
                 .orElseThrow(() -> new EntityNotFoundException("неверный юзернейм"));
         if(passwordEncoder.matches(personDto.getPassword(), person.getPassword())) {
-            tokens.put("access-token", jwtUtil.generateAccessToken(person.getUsername(), person.getRole()));
-            tokens.put("refresh-token", jwtUtil.generateRefreshToken(person.getUsername()));
+            tokens.put("access_token", jwtUtil.generateAccessToken(person.getUsername(), person.getRole()));
+            tokens.put("refresh_token", jwtUtil.generateRefreshToken(person.getUsername()));
             return tokens;
         }
         throw new PasswordDoesntMatchException("пароль неверный");

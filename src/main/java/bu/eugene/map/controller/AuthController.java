@@ -25,5 +25,10 @@ public class AuthController {
     public Map<String, String> login(@RequestBody PersonDto personDto) {
         return authService.login(personDto);
     }
+
+    @PostMapping("/refresh")
+    public Map<String, String> refreshToken(@RequestHeader("Authorization") String token) {
+        return authService.refreshToken(token);
+    }
 }
 

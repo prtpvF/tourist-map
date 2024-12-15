@@ -41,6 +41,7 @@ public class JwtUtil {
     }
 
     public Map<String, String> refreshTokens(String refreshToken, String role) {
+        refreshToken = refreshToken.substring(7);
         Map<String, String> tokenMap = new HashMap<>();
         String username = validateTokenAndRetrieveClaim(refreshToken);
         tokenMap.put("access-token", generateAccessToken(username, role));
@@ -78,7 +79,7 @@ public class JwtUtil {
 
     public void invalidToken(String token) {
         BlackListToken blackListToken = new BlackListToken();
-        //blackListToken.setToken(token.substring(7));
+        blackListToken.setToken(token.substring(7));
         tokenRepository.save(blackListToken);
     }
 

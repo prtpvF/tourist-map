@@ -29,6 +29,8 @@ public class Place {
 
         private String country;
 
+        private String placeId;
+
         @Column(name = "type")
         private String typeOfPlace;
 

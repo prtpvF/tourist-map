@@ -3,6 +3,7 @@ package bu.eugene.map.service;
 import bu.eugene.map.dto.ImageDto;
 import bu.eugene.map.exception.FileExtensionException;
 import bu.eugene.map.exception.FileUploadException;
+import bu.eugene.map.jwt.JwtUtil;
 import bu.eugene.map.model.ImageEntity;
 import bu.eugene.map.repository.ImageRepository;
 import bu.eugene.map.util.Dto2EntityConverter;
@@ -30,16 +31,17 @@ public class ImageService {
         private final Dto2EntityConverter dto2EntityConverter;
         private final Entity2DtoConverter entity2DtoConverter;
         private final PlaceService placeService;
+        private final JwtUtil jwtUtil;
         private final PersonService personService;
         private final String  UPLOAD_DIR = "/Users/mihail/Downloads/map-2/uploads";
 
         private final String[] IMAGE_EXTENSIONS = new String[]{"jpg", "jpeg", "png"};
 
-        public ImageDto saveImage(ImageDto imageDto, Integer placeId) {
+        public ImageDto saveImage(ImageDto imageDto, String placeId, String token) {
                 ImageEntity image = dto2EntityConverter.convertImageDto2ImageEntity(imageDto);
-                image.setPerson(personService.findByUsername(imageDto.getAuthorUsername()));
+                image.setPerson(personService.findByUsername(jwtUtil.validateTokenAndRetrieveClaim(token.substring(7))));
                 image.setPathToFile(saveImagesLocal(imageDto.getImage()));
-                image.setPlace(placeService.findById(placeId));
+                image.setPlace(placeService.findById(Integer.valueOf(placeId.replace("[object Object],", ""))));
                 return entity2DtoConverter.convertImageEntity2Dto(imageRepository.save(image));
         }
 

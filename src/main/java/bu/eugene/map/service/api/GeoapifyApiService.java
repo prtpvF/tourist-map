@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +29,13 @@ public class GeoapifyApiService {
         public  String getCoordinates(String cityName) {
                 try {
                         log.info("try to send a request to Geoapify API");
-                        HttpURLConnection conn = getHttpURLConnection(cityName);
+
+                        String encodedCityName = URLEncoder.encode(cityName, StandardCharsets.UTF_8);
+
+                        // Отправляем запрос с закодированным названием города
+                        HttpURLConnection conn = getHttpURLConnection(encodedCityName);
                         int responseCode = conn.getResponseCode();
+
                         if (responseCode == HttpURLConnection.HTTP_OK) {
                                 BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                                 String inputLine;
@@ -46,7 +53,7 @@ public class GeoapifyApiService {
                 } catch (Exception e) {
                         e.printStackTrace();
                 }
-               return null;
+                return null;
         }
 
         private @NotNull HttpURLConnection getHttpURLConnection(String cityName) throws IOException {

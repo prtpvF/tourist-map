@@ -18,3 +18,5 @@ spring:
             client-secret: ${CLIENT_SECRET}
 geoapify:
   secret: ${GEOAPIFY_SECRET}
+server:
+  port: 8081

@@ -15,7 +15,9 @@ public class ImageController {
     private final ImageService imageService;
 
     @PostMapping("/")
-    public ImageDto save(@ModelAttribute ImageDto imageDto, @RequestParam("placeId") Integer placeId) {
-        return imageService.saveImage(imageDto, placeId);
+    public ImageDto save(@ModelAttribute ImageDto imageDto,
+                         @RequestParam("placeId") String placeId,
+                         @RequestHeader("Authorization") String token) {
+        return imageService.saveImage(imageDto, placeId, token);
     }
 }

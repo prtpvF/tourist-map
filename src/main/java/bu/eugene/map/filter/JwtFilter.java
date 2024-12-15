@@ -3,6 +3,7 @@ package bu.eugene.map.filter;
 import bu.eugene.map.jwt.JwtUtil;
 import bu.eugene.map.service.PersonDetailsService;
 import bu.eugene.map.util.PersonDetails;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -52,6 +53,7 @@ public class JwtFilter extends GenericFilterBean {
         } catch (JWTVerificationException e) {
             log.error("JWT verification failed: {}", e.getMessage());
             sendErrorResponse(response);
+            throw new JWTVerificationException("Session Expired", e);
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
