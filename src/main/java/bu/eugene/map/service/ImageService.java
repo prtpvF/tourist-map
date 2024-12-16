@@ -8,9 +8,12 @@ import bu.eugene.map.model.ImageEntity;
 import bu.eugene.map.repository.ImageRepository;
 import bu.eugene.map.util.Dto2EntityConverter;
 import bu.eugene.map.util.Entity2DtoConverter;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,6 +46,20 @@ public class ImageService {
                 image.setPathToFile(saveImagesLocal(imageDto.getImage()));
                 image.setPlace(placeService.findById(Integer.valueOf(placeId.replace("[object Object],", ""))));
                 return entity2DtoConverter.convertImageEntity2Dto(imageRepository.save(image));
+        }
+
+        public ResponseEntity<?> deletePhoto(String token, Integer imageId) {
+                ImageEntity image = imageRepository.findById(imageId).orElseThrow(
+                        () -> new EntityNotFoundException("Image not found")
+                );
+
+                if (image.getPerson().getUsername().equals(
+                        jwtUtil.validateTokenAndRetrieveClaim(token.substring(7)))) {
+                        imageRepository.delete(image);
+                } else {
+                        throw new AccessDeniedException("You can delete only your images");
+                }
+                return ResponseEntity.ok().build();
         }
 
         public String saveImagesLocal(MultipartFile file) {

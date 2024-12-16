@@ -59,6 +59,7 @@ public class GeoapifyApiService {
         private @NotNull HttpURLConnection getHttpURLConnection(String cityName) throws IOException {
                 String urlString = "https://api.geoapify.com/v1/geocode/search?text="
                         + cityName
+                        +"&lang=ru"
                         +"&format=json&apiKey="
                         + secret;
 
